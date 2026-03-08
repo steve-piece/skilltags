@@ -37,6 +37,7 @@ You install great skills — `responsive-design`, `ui-ux-pro-max`, `supabase-pos
 ```
 I want to make my website components
 look more modern and responsive.
+
 ```
 
 The agent starts coding immediately. It doesn't check what skills are available. Even when you have skills relevant to your prompt that would improve the agent's output, the agent doesn't use them unless you explicitly tag them with `@{SKILL_NAME}`.
