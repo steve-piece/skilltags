@@ -1,7 +1,7 @@
 {
   "name": "skilltags",
-  "version": "2.0.0",
-  "description": "Generate category-based skill command files for AI coding agents. One tag loads all relevant skills — no more hunting for skill names.",
+  "version": "2.0.1",
+  "description": "Generate category commands that help agents find the right installed skills from one prompt tag. No more hunting for skill names.",
   "bin": {
     "skilltags": "bin/skilltags.js"
   },

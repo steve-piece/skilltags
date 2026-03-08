@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // bin/postinstall.js
 // Runs after `npm install skilltags`. First install: category picker + auto-sync confirm.
-// Reinstall: re-sync silently. Never throws — a failed postinstall should never break npm install.
+// Reinstall: re-sync silently. Never throws. A failed postinstall should never break npm install.
 
 'use strict';
 
