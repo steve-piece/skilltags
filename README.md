@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/skilltags"><img src="https://img.shields.io/npm/v/skilltags?color=cb3837&label=npm&logo=npm" alt="npm version"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/steve-piece/skilltags" alt="license"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/steve-piece/skill-tags" alt="license"></a>
   <a href="https://skills.sh"><img src="https://img.shields.io/badge/skills.sh-ecosystem-7c3aed?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAyTDIgNnY2bDEwIDQgMTAtNFY2TDEyIDJ6Ii8+PC9zdmc+" alt="skills.sh"></a>
 </p>
 
@@ -39,7 +39,7 @@ I want to make my website components
 look more modern and responsive.
 ```
 
-The agent starts coding immediately. It doesn't check what skills are available. Even when you have skills relevant to your prompt that would improve the agent's output, the agent doesn't use them unless you explicitly tell it to.
+The agent starts coding immediately. It doesn't check what skills are available. Even when you have skills relevant to your prompt that would improve the agent's output, the agent doesn't use them unless you explicitly tag them with `@{SKILL_NAME}`.
 
 </td>
 <td width="50%">

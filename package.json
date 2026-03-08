@@ -29,9 +29,9 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/steve-piece/skilltags.git"
+    "url": "git+https://github.com/steve-piece/skill-tags.git"
   },
-  "homepage": "https://github.com/steve-piece/skilltags#readme",
+  "homepage": "https://github.com/steve-piece/skill-tags#readme",
   "files": [
     "bin/",
     "lib/",
