@@ -105,10 +105,10 @@ Add a category command to the end of your prompt using `/`:
 
 ```mermaid
 flowchart LR
-    A["Install"] --> B["Select\nCategories"]
-    B --> C["Scan\n30+ Paths"]
-    C --> D["Match Skills\nto Categories"]
-    D --> E["Generate\nst-*.md Files"]
+    A["Install"] --> B["Select Categories"]
+    B --> C["Scan 30+ Paths"]
+    C --> D["Match Skills to Categories"]
+    D --> E["Generate st-*.md Files"]
 
     style A stroke-width:2px
     style E stroke-width:2px
