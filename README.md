@@ -8,7 +8,6 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/skilltags"><img src="https://img.shields.io/npm/v/skilltags?color=cb3837&label=npm&logo=npm" alt="npm version"></a>
-  <a href="https://www.npmjs.com/package/skilltags"><img src="https://img.shields.io/npm/dm/skilltags?color=blue&label=downloads" alt="downloads"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/steve-piece/skilltags" alt="license"></a>
   <a href="https://skills.sh"><img src="https://img.shields.io/badge/skills.sh-ecosystem-7c3aed?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAyTDIgNnY2bDEwIDQgMTAtNFY2TDEyIDJ6Ii8+PC9zdmc+" alt="skills.sh"></a>
 </p>
@@ -40,7 +39,7 @@ I want to make my website components
 look more modern and responsive.
 ```
 
-The agent starts coding immediately. It doesn't check what skills are available. Even when you have skills relevant to your prompt that would improve the agent's output, they go untouched. Then you end of trying to remember the name of the skill(s) that would help with your request, and begin to type all the `@{relevant_keywords}` for the skill in your chat hoping autocomplete saves the day.
+The agent starts coding immediately. It doesn't check what skills are available. Even when you have skills relevant to your prompt that would improve the agent's output, they go untouched. Then you end of trying to remember the name of the skill(s) that would help with your request.
 
 </td>
 <td width="50%">
