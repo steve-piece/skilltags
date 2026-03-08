@@ -1,6 +1,6 @@
 {
   "name": "skilltags",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Generate category commands that help agents find the right installed skills from one prompt tag. No more hunting for skill names.",
   "bin": {
     "skilltags": "bin/skilltags.js"
@@ -29,9 +29,9 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/steve-piece/skill-tags.git"
+    "url": "git+https://github.com/steve-piece/skilltags.git"
   },
-  "homepage": "https://github.com/steve-piece/skill-tags#readme",
+  "homepage": "https://github.com/steve-piece/skilltags#readme",
   "files": [
     "bin/",
     "lib/",

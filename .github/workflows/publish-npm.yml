@@ -1,0 +1,40 @@
+# .github/workflows/publish-npm.yml
+# Publish skilltags to npm automatically when a GitHub release is published.
+name: Publish to npm
+
+on:
+  release:
+    types:
+      - published
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out release tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name || github.ref_name }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+
+      - name: Verify tag matches package version
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name || github.ref_name }}
+        run: |
+          node -e "const pkg = require('./package.json'); const expected = `v${pkg.version}`; if (process.env.RELEASE_TAG !== expected) { console.error(`Release tag ${process.env.RELEASE_TAG} does not match package.json version ${expected}.`); process.exit(1); }"
+
+      - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --provenance

@@ -14,7 +14,8 @@ Thumbs.db
 
 # Cursor generated
 .cursor/commands/*
-.cursor/skill-tags-categories.conf
+.cursor/commands/st-release.md
+.cursor/skilltags-categories.conf
 .agents/*
 .claude/*
 # Env
