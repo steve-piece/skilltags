@@ -39,7 +39,7 @@ I want to make my website components
 look more modern and responsive.
 ```
 
-The agent starts coding immediately. It doesn't check what skills are available. Even when you have skills relevant to your prompt that would improve the agent's output, they go untouched. Then you end of trying to remember the name of the skill(s) that would help with your request.
+The agent starts coding immediately. It doesn't check what skills are available. Even when you have skills relevant to your prompt that would improve the agent's output, the agent doesn't use them unless you explicitly tell it to.
 
 </td>
 <td width="50%">
