@@ -1,0 +1,201 @@
+# Usage & Reference
+
+Detailed documentation for `skilltags` — config format, skill sources, and advanced usage.
+
+---
+
+## Installation Methods
+
+### npm (recommended)
+
+```bash
+npm install skilltags -g
+```
+
+### curl one-liner
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/steve-piece/skilltags/main/install.sh | bash
+```
+
+Both methods trigger the setup wizard on first install.
+
+---
+
+## Setup Wizard
+
+The wizard runs automatically after `npm install` and asks two things:
+
+1. **Select categories** — checkbox list of 12 predefined categories (space to toggle, enter to confirm)
+2. **Enable auto-sync?** — adds a shell wrapper to your rc file that runs `skilltags sync --quiet` after every `skills add` or `skills remove`
+
+The shell wrapper is added to whichever file matches your shell:
+
+| Shell | File |
+|-------|------|
+| zsh | `~/.zshrc` |
+| bash (macOS) | `~/.bash_profile` |
+| bash (Linux) | `~/.bashrc` |
+| other | `~/.profile` |
+
+On reinstall, the wizard is skipped and category files are re-synced silently.
+
+---
+
+## Commands
+
+### `skilltags` / `skilltags sync`
+
+Regenerate all category files from your current config. Reads `skilltags.json`, scans skill sources, writes `st-{category}.md` files.
+
+```bash
+skilltags              # sync (default)
+skilltags sync         # sync (explicit)
+skilltags sync --local # sync project-scoped files only
+skilltags sync --quiet # sync without any output (used by auto-sync hooks)
+```
+
+### `skilltags update`
+
+Re-run the category picker. Add new categories, remove existing ones.
+
+```bash
+skilltags update
+```
+
+Newly added categories are auto-matched to your installed skills via keyword analysis. Existing category lists are preserved. Removed categories have their `st-{category}.md` files deleted.
+
+### `skilltags update <category>`
+
+Edit the skills within a specific category. Shows a checkbox list of all skills currently in that category — uncheck any you want removed.
+
+```bash
+skilltags update frontend
+```
+
+This is useful when a skill was matched to a category by keyword but isn't actually relevant. Your changes are saved to config and persist across syncs.
+
+---
+
+## Flags
+
+| Flag | Description |
+|------|-------------|
+| `--local` | Write to `.cursor/commands/` (project scope) instead of `~/.cursor/commands/` (global) |
+| `--quiet` | Suppress all terminal output. Used by the auto-sync shell wrapper so sync runs silently after `skills add/remove`. |
+| `-v`, `--version` | Print version number |
+| `-h`, `--help` | Show help text |
+
+---
+
+## Config
+
+### Location
+
+| Scope | Path |
+|-------|------|
+| Global | `~/.cursor/skilltags.json` |
+| Project (`--local`) | `.cursor/skilltags.json` |
+
+### Format
+
+```json
+{
+  "version": "2.0.0",
+  "categories": {
+    "frontend": ["responsive-design", "ui-ux-pro-max", "vercel-react-best-practices"],
+    "backend": ["supabase-postgres-best-practices"],
+    "design": ["web-design-guidelines", "ui-animation"]
+  }
+}
+```
+
+- `version` — config schema version
+- `categories` — map of category name to array of skill names. Skill names match the directory name containing `SKILL.md`.
+
+---
+
+## Skill Sources
+
+skilltags scans every known agent skill directory on your machine. No configuration needed — if a directory exists, it's scanned.
+
+### Global paths
+
+| Path | Agent(s) |
+|------|----------|
+| `~/.agents/skills/` | Universal (Cursor, Copilot, Cline, Codex, Amp, Gemini CLI, Kimi Code, OpenCode) |
+| `~/.claude/skills/` | Claude Code |
+| `~/.cursor/skills/` | Cursor |
+| `~/.cursor/skills-cursor/` | Cursor built-in skills |
+| `~/.cursor/plugins/cache/` | Cursor marketplace plugins |
+| `~/.copilot/skills/` | GitHub Copilot |
+| `~/.cline/skills/` | Cline |
+| `~/.codex/skills/` | Codex |
+| `~/.gemini/skills/` | Gemini CLI |
+| `~/.roo/skills/` | Roo Code |
+| `~/.augment/skills/` | Augment |
+| `~/.trae/skills/` | Trae |
+| `~/.continue/skills/` | Continue |
+| `~/.junie/skills/` | Junie |
+| `~/.windsurf/skills/` | Windsurf |
+| `~/.codeium/windsurf/skills/` | Windsurf (Codeium) |
+| `~/.kilocode/skills/` | Kilo Code |
+| And 15+ more | See [`lib/config.js`](../lib/config.js) for the full list |
+
+### Project paths (scanned alongside global)
+
+| Path | Agent(s) |
+|------|----------|
+| `.agents/skills/` | Universal |
+| `.claude/skills/` | Claude Code |
+| `.cursor/skills/` | Cursor |
+| `.github/skills/` | GitHub Copilot |
+| `.cline/skills/` | Cline |
+| `.roo/skills/` | Roo Code |
+| `.codex/skills/` | Codex |
+
+### Deduplication
+
+Skills are deduplicated by name. The first source to provide a skill wins (global sources are scanned before project sources). This handles the symlinks that `npx skills add` creates across agent directories.
+
+---
+
+## Output Files
+
+Category files are written to `~/.cursor/commands/` (or `.cursor/commands/` with `--local`).
+
+Each file follows this structure:
+
+```markdown
+# Skills: Frontend
+
+<!-- Auto-generated by skilltags v2.0.0 — do not edit manually -->
+
+[Instructional header telling the agent to review skills before acting]
+
+## Frontend Skills
+
+### Responsive Design
+`~/.agents/skills/responsive-design`
+
+Description of the skill...
+
+### Ui Ux Pro Max
+`~/.agents/skills/ui-ux-pro-max`
+
+Description of the skill...
+```
+
+The instructional header is the key piece — it overrides the agent's default behavior of skipping skill review and forces it to check the listed skills against the current request.
+
+---
+
+## Migration from v1
+
+If you're upgrading from `skill-tags` v1.x, skilltags v2 automatically:
+
+- Migrates `skill-tags-categories.conf` to `skilltags.json`
+- Removes old output files (`skill-tags.md`, `project-skill-tags.md`, `skills-*.md`)
+- Updates the shell wrapper in your rc file to use the new `skilltags sync --quiet` command
+
+This happens on the first `skilltags sync` after upgrading. No manual steps needed.

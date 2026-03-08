@@ -1,81 +1,151 @@
 #!/usr/bin/env node
 // bin/postinstall.js
-// Runs automatically after `npm install skill-tags`.
-// Launches interactive setup wizard on first install; re-syncs on reinstall.
-// Falls back gracefully for non-interactive environments (CI, piped input).
-// Never throws — a failed postinstall should never break npm install.
+// Runs after `npm install skilltags`. First install: category picker + auto-sync confirm.
+// Reinstall: re-sync silently. Never throws — a failed postinstall should never break npm install.
 
 'use strict';
+
+if (process.platform === 'win32') process.exit(0);
 
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
 
-if (process.platform === 'win32') {
-  process.exit(0);
+const HOME = os.homedir();
+
+function isInteractive() {
+  return process.stdin.isTTY && process.stdout.isTTY;
 }
 
-const HOME = os.homedir();
-const isGlobal = process.env.npm_config_global === 'true';
-const SYNC_SCRIPT = path.join(__dirname, '..', 'sync.sh');
-const WRAPPER_MARKER = '# ─── skill-tags / Cursor Skill Command Sync';
+function detectRcFile() {
+  const shellName = path.basename(process.env.SHELL || 'bash');
+  if (shellName === 'zsh') return path.join(HOME, '.zshrc');
+  if (process.platform === 'darwin') return path.join(HOME, '.bash_profile');
+  return path.join(HOME, '.bashrc');
+}
 
-function isAlreadyConfigured() {
-  if (isGlobal) {
-    const shellName = path.basename(process.env.SHELL || 'bash');
-    let rcFile;
-    if (shellName === 'zsh') rcFile = path.join(HOME, '.zshrc');
-    else if (process.platform === 'darwin') rcFile = path.join(HOME, '.bash_profile');
-    else rcFile = path.join(HOME, '.bashrc');
+async function runSetupWizard() {
+  const { checkbox, confirm } = require('@inquirer/prompts');
+  const { PREDEFINED_CATEGORIES, matchSkillsToCategories, toTitleCase } = require('../lib/categories');
+  const { discoverSkills } = require('../lib/discovery');
+  const { writeConfig, createDefaultConfig, getCommandsDir, WRAPPER_MARKER } = require('../lib/config');
+  const { generateAllCategoryFiles } = require('../lib/writer');
 
+  console.log('\n  skilltags: setup\n');
+
+  const selected = await checkbox({
+    message: 'Select categories (space to toggle, enter to confirm)',
+    choices: PREDEFINED_CATEGORIES.map(c => ({ name: toTitleCase(c), value: c })),
+    pageSize: 14,
+  });
+
+  if (selected.length === 0) {
+    console.log('  No categories selected. You can add them later with: skilltags update\n');
+    return;
+  }
+
+  console.log(`\n  Scanning skills...\n`);
+  const { skills, sourceCount } = discoverSkills();
+  console.log(`  Found ${skills.length} skill(s) across ${sourceCount} source(s)\n`);
+
+  const matched = matchSkillsToCategories(skills, selected);
+  const config = createDefaultConfig(matched);
+
+  const pad = Math.max(...selected.map(c => toTitleCase(c).length));
+  console.log('  +' + '-'.repeat(pad + 4) + '+' + '-'.repeat(10) + '+');
+  console.log('  | ' + 'Category'.padEnd(pad + 2) + '| ' + 'Skills'.padEnd(8) + ' |');
+  console.log('  +' + '-'.repeat(pad + 4) + '+' + '-'.repeat(10) + '+');
+  for (const cat of selected) {
+    const count = String(matched[cat]?.length || 0).padStart(5);
+    console.log('  | ' + toTitleCase(cat).padEnd(pad + 2) + '| ' + count + '    |');
+  }
+  console.log('  +' + '-'.repeat(pad + 4) + '+' + '-'.repeat(10) + '+');
+
+  const rcFile = detectRcFile();
+  const displayRc = rcFile.replace(HOME, '~');
+
+  let alreadyInstalled = false;
+  try {
+    const content = fs.readFileSync(rcFile, 'utf-8');
+    if (content.includes(WRAPPER_MARKER)) alreadyInstalled = true;
+  } catch {}
+
+  let autoSync = false;
+  if (!alreadyInstalled) {
+    autoSync = await confirm({
+      message: `Auto-sync skills automatically? (adds a wrapper function to ${displayRc})`,
+      default: true,
+    });
+  }
+
+  if (autoSync && !alreadyInstalled) {
+    const wrapper = `
+${WRAPPER_MARKER}-------------------------------------------------------
+function skills() {
+  npx skills "$@"
+  local exit_code=$?
+  if [[ "$1" == "add" || "$1" == "remove" ]] && [[ $exit_code -eq 0 ]]; then
+    skilltags sync --quiet
+  fi
+  return $exit_code
+}
+# ------------------------------------------------------------------------------
+`;
     try {
-      return fs.readFileSync(rcFile, 'utf-8').includes(WRAPPER_MARKER);
-    } catch {
-      return false;
+      fs.appendFileSync(rcFile, wrapper);
+    } catch (err) {
+      console.error(`\n  Failed to write to ${displayRc}: ${err.message}`);
     }
   }
 
-  try {
-    const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf-8'));
-    return pkg.scripts?.skills === 'st-skills';
-  } catch {
-    return false;
-  }
-}
+  writeConfig(config, false);
 
-function runSync() {
-  if (!fs.existsSync(SYNC_SCRIPT)) return;
-  const { spawnSync } = require('child_process');
-  spawnSync('bash', [SYNC_SCRIPT], { stdio: 'inherit' });
+  const commandsDir = getCommandsDir(false);
+  const results = generateAllCategoryFiles(config, skills, commandsDir);
+
+  console.log('\n  Done!');
+  console.log('  Generated:');
+  for (const r of results) {
+    const display = r.path.replace(HOME, '~');
+    console.log(`    ${display}  (${r.count} skills)`);
+  }
+
+  if (autoSync) {
+    console.log('\n  Auto-sync enabled. Category files will update when you add or remove skills.');
+  } else {
+    console.log('\n  To manually sync after adding or removing skills, run:');
+    console.log('    skilltags sync');
+    console.log('\n  To update your categories, run:');
+    console.log('    skilltags update');
+  }
+
+  console.log('\n  Usage: type @st-frontend in Cursor chat to load frontend skills.\n');
 }
 
 async function main() {
-  if (isAlreadyConfigured()) {
-    if (isGlobal) {
-      console.log('\n  skill-tags: re-syncing...\n');
-      runSync();
-    } else {
-      console.log('\n  skill-tags: already configured.\n');
-    }
+  const { readConfig } = require('../lib/config');
+
+  const existingConfig = readConfig(false);
+
+  if (existingConfig) {
+    const { runSync } = require('../lib/sync');
+    runSync({ quiet: true });
+    return;
+  }
+
+  if (!isInteractive()) {
+    console.log('\n  skilltags installed. Run skilltags update to configure categories.\n');
     return;
   }
 
   try {
-    const runSetup = require('./setup');
-    await runSetup();
+    await runSetupWizard();
   } catch (err) {
     if (err.name === 'ExitPromptError') {
-      console.log();
+      console.log('\n');
       return;
     }
-    if (isGlobal) {
-      console.log('\n  skill-tags: running initial sync...\n');
-      runSync();
-      console.log('  To configure auto-sync, run: skill-tags --setup\n');
-    } else {
-      console.log('\n  skill-tags installed as a project dependency.');
-      console.log('  Run setup to configure: npx skill-tags --setup\n');
-    }
+    console.log('\n  skilltags installed. Run skilltags update to configure categories.\n');
   }
 }
 

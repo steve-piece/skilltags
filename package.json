@@ -1,10 +1,9 @@
 {
-  "name": "skill-tags",
-  "version": "1.5.0",
-  "description": "Generates consolidated command files (@skill-tags.md and custom @skills-<category>.md indexes) for all installed Cursor skills.",
+  "name": "skilltags",
+  "version": "2.0.0",
+  "description": "Generate category-based skill command files for AI coding agents. One tag loads all relevant skills — no more hunting for skill names.",
   "bin": {
-    "skill-tags": "bin/skill-tags.js",
-    "st-skills": "bin/st-skills.js"
+    "skilltags": "bin/skilltags.js"
   },
   "scripts": {
     "postinstall": "node ./bin/postinstall.js"
@@ -18,25 +17,25 @@
     "skills",
     "agent-skills",
     "skills.sh",
-    "skill-tags",
+    "skilltags",
     "ai",
     "llm",
     "mcp",
     "claude",
-    "codex"
+    "codex",
+    "copilot"
   ],
   "author": "Steven Light",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/steve-piece/skill-tags.git"
+    "url": "git+https://github.com/steve-piece/skilltags.git"
   },
-  "homepage": "https://github.com/steve-piece/skill-tags#readme",
+  "homepage": "https://github.com/steve-piece/skilltags#readme",
   "files": [
     "bin/",
-    "sync.sh",
+    "lib/",
     "install.sh",
-    "uninstall.sh",
     "README.md",
     "LICENSE"
   ],
