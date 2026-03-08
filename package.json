@@ -1,6 +1,6 @@
 {
   "name": "skilltags",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Generate category commands that help agents find the right installed skills from one prompt tag. No more hunting for skill names.",
   "bin": {
     "skilltags": "bin/skilltags.js"
