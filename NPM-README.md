@@ -1,3 +1,6 @@
+<!-- NPM-README.md -->
+<!-- npm-optimized README without GitHub-only features (mermaid, admonitions, etc.) -->
+
 <p align="center">
   <h1 align="center">skilltags</h1>
 </p>
@@ -69,8 +72,8 @@ I want to make my website components look more modern and responsive.
 
 The agent reads the generated `st-frontend.md` command file, reviews the listed skills, and opens the relevant ones before starting work.
 
-> [!TIP]
-> New to skills? Browse and install from [skills.sh](https://skills.sh):
+> **Tip:** New to skills? Browse and install from [skills.sh](https://skills.sh):
+>
 > ```bash
 > npx skills find            # search the skills directory
 > npx skills add owner/repo  # install a skill package
@@ -84,36 +87,9 @@ You install great skills, but when you prompt the agent, it just starts coding. 
 
 ## The fix
 
-<table>
-<tr>
-<td width="50%">
-
-**Without skilltags**
-
-```
-I want to make my website components
-look more modern and responsive.
-
-```
-
-The agent starts coding immediately. It does not check what relevant skills you have installed, so useful skills often go unused unless you explicitly reference them by name in your prompt.
-
-</td>
-<td width="50%">
-
-**With skilltags**
-
-```
-I want to make my website components
-look more modern and responsive.
-/st-frontend
-```
-
-The agent reads the `st-frontend.md` command file, which contains a curated list of your installed frontend skill names and descriptions. The header instructs the agent to review that list, identify which skills are relevant to your request, and open only those skills before starting work.
-
-</td>
-</tr>
-</table>
+| Without skilltags | With skilltags |
+|:--|:--|
+| `I want to make my website components look more modern and responsive.` — The agent starts coding immediately. It does not check what relevant skills you have installed, so useful skills often go unused unless you explicitly reference them by name in your prompt. | `I want to make my website components look more modern and responsive. /st-frontend` — The agent reads the `st-frontend.md` command file, which contains a curated list of your installed frontend skill names and descriptions. The header instructs the agent to review that list, identify which skills are relevant to your request, and open only those skills before starting work. |
 
 ---
 
@@ -136,23 +112,14 @@ Add a category command to the end of your prompt using `/`:
 | `/st-agent-tools` | MCP, subagents, skill creation, browser automation |
 | `/st-documentation` | Markdown, MDX, OpenAPI, Docusaurus |
 
-> [!NOTE]
 > Don't see a category you need? [Suggest one](https://github.com/steve-piece/skilltags/issues). We're always expanding the list.
 
 ---
 
 ## How It Works
 
-```mermaid
-flowchart LR
-    A["Install"] --> B["Choose Global or Project Scope"]
-    B --> C["Select Categories"]
-    C --> D["Scan Known Skill Paths"]
-    D --> E["Match Skills to Categories"]
-    E --> F["Write skilltags.json + st-*.md Files"]
-
-    style A stroke-width:2px
-    style F stroke-width:2px
+```
+Install -> Choose Global or Project Scope -> Select Categories -> Scan Known Skill Paths -> Match Skills -> Write skilltags.json + st-*.md Files
 ```
 
 | Step | What happens |
@@ -170,8 +137,7 @@ Each generated `st-{category}.md` file contains two parts:
 1. **An instructional header** that tells the agent to review the listed skill names and descriptions, identify which ones are relevant to the user's request, and open those skills before starting work.
 2. **A curated skill list** with every matched skill for that category, including its name, file path, and description.
 
-> [!IMPORTANT]
-> The instructional header is what makes this work. It tells the agent to evaluate the listed skills against the request first, instead of jumping straight into implementation.
+> **Important:** The instructional header is what makes this work. It tells the agent to evaluate the listed skills against the request first, instead of jumping straight into implementation.
 
 <details>
 <summary><strong>What does auto-sync do?</strong></summary>
@@ -207,7 +173,7 @@ skilltags update <category>    Edit skills within a specific category
 
 </details>
 
-Full reference: [docs/usage.md](docs/usage.md)
+Full reference: [docs/usage.md](https://github.com/steve-piece/skilltags/blob/main/docs/usage.md)
 
 ---
 
@@ -215,7 +181,7 @@ Full reference: [docs/usage.md](docs/usage.md)
 
 **Suggest a category.** Think a new skill category would be useful? [Open an issue](https://github.com/steve-piece/skilltags/issues) with the category name and what types of skills it should cover. The more specific the better. Including "what keywords should match this category?" helps us get it right.
 
-**Improve keyword matching.** Category keyword mappings live in [`lib/categories.js`](lib/categories.js). If a skill isn't landing in the right category, PRs to improve the keyword lists are welcome.
+**Improve keyword matching.** Category keyword mappings live in [`lib/categories.js`](https://github.com/steve-piece/skilltags/blob/main/lib/categories.js). If a skill isn't landing in the right category, PRs to improve the keyword lists are welcome.
 
 ---
 

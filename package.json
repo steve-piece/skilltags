@@ -1,12 +1,16 @@
 {
   "name": "skilltags",
-  "version": "2.0.3",
-  "description": "Generate category commands that help agents find the right installed skills from one prompt tag. No more hunting for skill names.",
+  "version": "2.1.0",
+  "description": "Generate global or project-scoped Cursor command files that group installed skills by category, so agents can load the right skills from one prompt tag.",
   "bin": {
     "skilltags": "bin/skilltags.js"
   },
   "scripts": {
-    "postinstall": "node ./bin/postinstall.js"
+    "postinstall": "node ./bin/postinstall.js",
+    "use:npmReadme": "cp NPM-README.md README.md",
+    "use:gitReadme": "git checkout -- README.md",
+    "prepublishOnly": "npm run use:npmReadme",
+    "postpublish": "npm run use:gitReadme"
   },
   "engines": {
     "node": ">=18"
