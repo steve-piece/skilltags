@@ -28,7 +28,11 @@ async function main() {
 
     if (existingLocalConfig) {
       const { runSync } = require('../lib/sync');
-      runSync({ localOnly: true, quiet: true });
+      try {
+        runSync({ localOnly: true, quiet: true });
+      } catch (err) {
+        // Ignore errors to avoid breaking npm install
+      }
       return;
     }
 
@@ -40,7 +44,11 @@ async function main() {
 
   if (existingConfig) {
     const { runSync } = require('../lib/sync');
-    runSync({ quiet: true });
+    try {
+      runSync({ quiet: true });
+    } catch (err) {
+      // Ignore errors to avoid breaking npm install
+    }
     return;
   }
 
