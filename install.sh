@@ -30,12 +30,15 @@ fi
 
 printf "\n  Installing skilltags...\n\n"
 
-npm install -g skilltags
+npm install -g skilltags --ignore-scripts
 
-# npm postinstall handles the setup wizard (category picker + auto-sync confirm).
-# If postinstall was non-interactive, provide fallback instructions.
-
-if ! [ -t 0 ]; then
+if [ -t 0 ] && [ -t 1 ]; then
+  printf "\n  Starting setup...\n\n"
+  if ! skilltags update; then
+    printf "\n  Setup did not complete.\n"
+    printf "  Run skilltags update to finish configuring categories.\n\n"
+  fi
+else
   printf "\n  Setup:\n"
   printf "    skilltags update     Select skill categories\n"
   printf "    skilltags sync       Generate category files\n"
